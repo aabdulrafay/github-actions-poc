@@ -1,0 +1,39 @@
+name: 5A Multi OS
+on:
+  workflow_dispatch:
+jobs:
+  linux-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show Linux version
+        run: |
+          echo "Runner OS: ${{ runner.os }}"
+          cat /etc/os-release
+
+  windows-job:
+    runs-on: windows-latest
+    steps:
+      - name: Show Windows version (PowerShell)
+        shell: powershell
+        run: |
+          Write-Host "Runner OS: ${{ runner.os }}"
+          Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version
+      - name: Use Chocolatey
+        run: |
+          choco --version
+          choco install jq -y
+          jq --version
+
+  mac-job:
+    runs-on: macos-latest
+    steps:
+      - name: Show macOS version
+        run: |
+          echo "Runner OS: ${{ runner.os }}"
+          sw_vers
+      - name: Compile and run Swift
+        run: |
+          swift --version
+          echo 'print("Hello from Swift on macOS")' > hello.swift
+          swiftc hello.swift -o hello
+          ./hello
