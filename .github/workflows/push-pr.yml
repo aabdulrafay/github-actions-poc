@@ -1,0 +1,11 @@
+name: Push and PR
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Event is ${{ github.event_name }}"
