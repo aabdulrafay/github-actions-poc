@@ -1,0 +1,36 @@
+name: 3 Contexts
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+env:
+  APP_NAME: my-poc-app
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print context objects
+        run: |
+          echo "Actor: ${{ github.actor }}"
+          echo "Event: ${{ github.event_name }}"
+          echo "Repo: ${{ github.repository }}"
+          echo "Runner OS: ${{ runner.os }}"
+          echo "Variable: ${{ vars.MY_VAR }}"
+          echo "Env: ${{ env.APP_NAME }}"
+
+      - name: Runs if commit message contains deploy
+        if: contains(github.event.head_commit.message, 'deploy')
+        run: echo "The commit message contains the word deploy"
+
+      - name: Runs only if everything before succeeded
+        if: success()
+        run: echo "success() is true"
+
+      - name: Runs only if something failed
+        if: failure()
+        run: echo "failure() is true"
+
+      - name: Always runs
+        if: always()
+        run: echo "always() runs every time"
+        
