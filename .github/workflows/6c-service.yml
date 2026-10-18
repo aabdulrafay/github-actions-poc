@@ -1,0 +1,31 @@
+name: 6C Service Container
+on:
+  workflow_dispatch:
+jobs:
+  db-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+      - name: Run test queries
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -c "SELECT version();"
+          psql -h localhost -U postgres -c "CREATE TABLE students (id INT, name TEXT);"
+          psql -h localhost -U postgres -c "INSERT INTO students VALUES (1, 'Abdul Rafay');"
+          psql -h localhost -U postgres -c "SELECT * FROM students;"
